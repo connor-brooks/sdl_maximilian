@@ -10,7 +10,7 @@ const int SAMPLE_RATE = 44100;
 const int BUFFER = 2048;
 const int FREQ = 440;
 
-void init();
+void init_sdl();
 void init_audio();
 void audio_callback();
 void init_gl();
@@ -34,15 +34,13 @@ void audio_callback(void *user_data, Uint8 *raw_buffer, int bytes)
   }
 }
 
-void init() {
+void init_sdl() {
   SDL_Init(SDL_INIT_VIDEO);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
   window = SDL_CreateWindow("SDL_Maximilian",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 680, 480, 0);
   context = SDL_GL_CreateContext(window);
   SDL_GL_SetSwapInterval(1);
-  init_gl();
-  init_audio();
 }
 
 void init_audio()
@@ -88,8 +86,12 @@ void quit()
 int main(int argc, char* args[])
 {
   bool should_quit = false;
-  init();
+
+  init_sdl();
   SDL_Event events;
+
+  init_gl();
+  init_audio();
 
   SDL_PauseAudio(0);
 
