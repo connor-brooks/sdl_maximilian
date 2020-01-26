@@ -8,7 +8,6 @@
 const int AMPLITUDE = 28000;
 const int SAMPLE_RATE = 44100;
 const int BUFFER = 2048;
-const int FREQ = 440;
 
 void init_sdl();
 void init_audio();
@@ -19,8 +18,8 @@ void quit();
 
 SDL_Window* window = NULL;
 SDL_GLContext context;
+maxiOsc carrier, modulator;
 int sample_num = 0;
-
 
 void audio_callback(void *user_data, Uint8 *raw_buffer, int bytes)
 {
@@ -30,7 +29,10 @@ void audio_callback(void *user_data, Uint8 *raw_buffer, int bytes)
 
   for(int i = 0; i < length; i++, sample_num++)
   {
-    buffer[i] = AMPLITUDE * sin( 2 * M_PI * FREQ * sample_num / SAMPLE_RATE);
+    // FM synthesis
+    buffer[i] = AMPLITUDE * carrier.sinewave(440 + 
+        (modulator.sinewave(1)*100)
+        );
   }
 }
 
@@ -38,7 +40,8 @@ void init_sdl() {
   SDL_Init(SDL_INIT_VIDEO);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-  window = SDL_CreateWindow("SDL_Maximilian",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 680, 480, 0);
+  window = SDL_CreateWindow("SDL_Maximilian",SDL_WINDOWPOS_CENTERED, 
+      SDL_WINDOWPOS_CENTERED, 680, 480, 0);
   context = SDL_GL_CreateContext(window);
   SDL_GL_SetSwapInterval(1);
 }
@@ -64,16 +67,16 @@ void init_gl()
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
   glClearColor(0.f, 0.f, 0.f, 1.f);
 }
 
 void render()
 {
+  float y = modulator.sinewave(1);
   glPointSize(10);
   glClear(GL_COLOR_BUFFER_BIT);
   glBegin(GL_POINTS);
-  glVertex2f(0, 0);
+  glVertex2f(0, y);
   glEnd();
 }
 
