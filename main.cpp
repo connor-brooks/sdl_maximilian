@@ -72,6 +72,7 @@ void init_gl()
 
 void render()
 {
+  // Draw the modulator position
   float y = modulator.sinewave(1);
   glPointSize(10);
   glClear(GL_COLOR_BUFFER_BIT);
